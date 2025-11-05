@@ -135,8 +135,8 @@ def carregar_fazenda():
         else:
             dias_para_produzir = 2  
 
-    animal = Animal(nome, preco=0, produto=produzido, dias_para_produzir=dias_para_produzir)
-    fazenda.animais.append(animal)
+        animal = Animal(nome, preco=0, produto=produzido, dias_para_produzir=dias_para_produzir)
+        fazenda.animais.append(animal)
 
 
     conn.close()
