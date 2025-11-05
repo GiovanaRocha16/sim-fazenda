@@ -3,17 +3,28 @@ from escolher_animal_ou_planta import escolher_animal_ou_planta
 from package.fabrica import fabricar
 from package.lagoa_dos_peixes import lagoa_dos_peixes
 from utils import colorir 
+from banco import criar_tabelas
+from banco import carregar_fazenda
+from banco import salvar_fazenda
 
 def main():
-    print(colorir("🌾 Bem-vindo ao Sim fazenda! 🌾", "verde" ))
-    nome_fazenda = input("Digite o nome da sua fazenda: ")
-    fazenda = Fazenda(nome_fazenda)
+    criar_tabelas()
+    fazenda = carregar_fazenda()
+    print(colorir("🌾 Bem-vindo ao Sim fazenda! 🌾", "verde"))
+
+    if fazenda is None:
+        nome = input("Digite o nome da sua fazenda: ")
+        fazenda = Fazenda(nome)
+        salvar_fazenda(fazenda)
+    else:
+        fazenda.energia_maxima = fazenda.calcular_energia_maxima()
+        fazenda.energia = min(fazenda.energia, fazenda.energia_maxima)
 
     while True:
         opcao_fabrica = fazenda.nivel >= 3
         opcao_lagoa = fazenda.nivel >= 4
 
-        print(f"\n🏡 {fazenda.nome} - Dia {fazenda.dia} 🌤️ | Nível ✨: {fazenda.nivel} | Dinheiro 💰: {fazenda.dinheiro} | Energia ⚡: {fazenda.energia}/{fazenda.energia_max}")
+        print(f"\n🏡 {fazenda.nome} - Dia {fazenda.dia} 🌤️ | Nível ✨: {fazenda.nivel} | Dinheiro 💰: {fazenda.dinheiro} | Energia ⚡: {fazenda.energia}/{fazenda.energia_maxima}")
         print(colorir("1. Ir ao mercadinho", "amarelo"))
         print(colorir("2. Comprar Animal ou Planta", "amarelo"))
         print(colorir("3. Cuidar das Plantas (crescer)", "amarelo"))
@@ -64,9 +75,12 @@ def main():
             lagoa_dos_peixes(fazenda)
         elif opcao == ultima_opcao:
             print("Saindo do jogo... Até a próxima! 👋")
+            salvar_fazenda(fazenda)
             break
         else:
             print(colorir("Opção inválida! Tente novamente.", "vermelho"))
+            
+    salvar_fazenda(fazenda)
 
 def comprar_item(fazenda):
     mercadinho = {

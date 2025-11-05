@@ -10,12 +10,11 @@ class Fazenda:
         self.dia = 1
         self.protecao = False
         self.racao = 0
-        self.energia_maxima = 10
-        self.energia = self.energia_maxima
         self.nivel = 1
+        self.energia_maxima = self.calcular_energia_maxima()
+        self.energia = self.energia_maxima
         self.xp = 0
         self.xp_para_proximo_nivel = 50
-        self.energia_max = 10
         self.plantas_desbloqueadas = ["Milho", "Trigo"]  
         self.animais_desbloqueados = ["Galinha", "Vaca"] 
     
@@ -26,14 +25,17 @@ class Fazenda:
 
         while self.xp >= self.xp_para_proximo_nivel:
             self.subir_nivel()
+    
+    def calcular_energia_maxima(self):
+        return 10 + (self.nivel - 1) * 2
 
     def subir_nivel(self):
         self.nivel += 1
         self.xp -= self.xp_para_proximo_nivel
         self.xp_para_proximo_nivel = int(self.xp_para_proximo_nivel * 1.5)
-        self.energia_max += 2
+        self.energia_maxima = self.calcular_energia_maxima()
         print(f"🎉 Parabéns! Sua fazenda subiu para o nível {self.nivel}!")
-        print(f"⚡ Energia máxima aumentou para {self.energia_max}!")
+        print(f"⚡ Energia máxima aumentou para {self.energia_maxima}!")
 
     # Desbloqueio
         if self.nivel == 2:
@@ -88,8 +90,8 @@ class Fazenda:
         for animal in self.animais:
             animal.passar_dia()
 
-        self.energia = self.energia_max
-        print(f"💤 Você descansou e recuperou sua energia total ({self.energia_max}).")
+        self.energia = self.energia_maxima
+        print(f"💤 Você descansou e recuperou sua energia total ({self.energia_maxima}).")
 
         self.dia += 1
 
