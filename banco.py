@@ -66,7 +66,7 @@ def salvar_fazenda(fazenda):
 
     for item in fazenda.estoque:
         nome = item.get("nome", "Desconhecido")
-        quantidade = item.get("quantidade", 1)  # evita erro se não existir
+        quantidade = item.get("quantidade", 1)  
         preco = item.get("preco", 0)
 
         cursor.execute("""
