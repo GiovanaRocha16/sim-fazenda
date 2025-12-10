@@ -12,7 +12,7 @@ class Animal:
         if not self.alimentado:
             self.alimentado = True
             self.dias_alimentado_consecutivo += 1
-            if self.dias_alimentado_consecutivo >= self.dias_para_produzir:
+            if self.dias_alimentado_consecutivo >= self.dias_para_produzir or self.dias_para_produzir == 1:
                 print(f"{self.nome} foi alimentado e produziu {self.produto}!")
                 self.dias_alimentado_consecutivo = 0
                 return self.produto

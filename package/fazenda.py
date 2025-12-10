@@ -1,4 +1,7 @@
 import random
+import pickle
+import os
+
 class Fazenda:
     def __init__(self, nome):
         self.nome = nome
@@ -72,29 +75,28 @@ class Fazenda:
         print(f"Dinheiro: R$ {self.dinheiro:.2f}")
         print("---------------------------\n")
 
+        plantas_perdidas = []
+
         if self.protecao:
             print("Pesticida protegeu suas plantas hoje!")
             self.protecao = False
         else:
-            if self.plantas:
-                chance_praga = 0.2
-                if random.random() < chance_praga:
-                    qtd_perdida = random.randint(1, len(self.plantas))
-                    perdidas = random.sample(self.plantas, qtd_perdida)
-                    for planta in perdidas:
-                        self.plantas.remove(planta)
-                    nomes_perdidos = [p.nome for p in perdidas]
-                    print(f"Pragas atacaram a fazenda! As plantas {nomes_perdidos} foram destruídas!")
+            if self.plantas and random.random() < 0.25:
+                qtd_perdida = random.randint(1, len(self.plantas))
+                perdidas = random.sample(self.plantas, qtd_perdida)
+                for planta in perdidas:
+                    self.plantas.remove(planta)
+                plantas_perdidas = [p.nome for p in perdidas]
+                print(f"Pragas atacaram a fazenda! As plantas {plantas_perdidas} foram destruídas!")
         
-       
+
         for animal in self.animais:
             animal.passar_dia()
 
         self.energia = self.energia_maxima
         print(f"💤 Você descansou e recuperou sua energia total ({self.energia_maxima}).")
-
         self.dia += 1
-
+        return plantas_perdidas
 
 
     def get_dinheiro(self):
@@ -201,6 +203,18 @@ class Fazenda:
         self.estoque.clear()
         self.status_estoque.clear()
 
+    def get_produtos_disponiveis(self):
+        produtos_dict = {}
+        for item in self.estoque:
+            nome = item["nome"]
+            preco = item["preco"]
+            if nome in produtos_dict:
+                produtos_dict[nome]["quantidade"] += 1
+            else:
+                produtos_dict[nome] = {"quantidade": 1, "preco": preco}
+
+        return [(nome, dados["quantidade"], dados["preco"]) for nome, dados in produtos_dict.items()]
+
 
     def vender_animais(self):
         
@@ -265,3 +279,21 @@ class Fazenda:
             return 13, 9
         else:
             return 15, 10
+
+def salvar_fazenda(fazenda, nome_arquivo="save_fazenda.pkl"):
+    """Salva os dados da fazenda em um arquivo."""
+    with open(nome_arquivo, "wb") as f:
+        pickle.dump(fazenda, f)
+    print("💾 Fazenda salva com sucesso!")
+
+def carregar_fazenda(nome_arquivo="save_fazenda.pkl"):
+    """Carrega os dados da fazenda, se o arquivo existir."""
+    if os.path.exists(nome_arquivo):
+        with open(nome_arquivo, "rb") as f:
+            fazenda = pickle.load(f)
+        print("🌱 Fazenda carregada com sucesso!")
+        return fazenda
+    else:
+        print("Nenhum save encontrado. Criando uma nova fazenda.")
+        return None
+
